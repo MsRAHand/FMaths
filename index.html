@@ -1,0 +1,851 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.6.42">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Exploratory Factor Analysis</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+</style>
+
+
+<script src="index_files/libs/clipboard/clipboard.min.js"></script>
+<script src="index_files/libs/quarto-html/quarto.js"></script>
+<script src="index_files/libs/quarto-html/popper.min.js"></script>
+<script src="index_files/libs/quarto-html/tippy.umd.min.js"></script>
+<script src="index_files/libs/quarto-html/anchor.min.js"></script>
+<link href="index_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="index_files/libs/quarto-html/quarto-syntax-highlighting-2f5df379a58b258e96c21c0638c20c03.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="index_files/libs/bootstrap/bootstrap.min.js"></script>
+<link href="index_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="index_files/libs/bootstrap/bootstrap-1bc8a17f135ab3d594c857e9f48e611b.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+</head>
+
+<body>
+
+<div id="quarto-content" class="page-columns page-rows-contents page-layout-article">
+<div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
+</div>
+<main class="content page-columns page-full" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Exploratory Factor Analysis</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<section id="who-should-read-this-page" class="level2">
+<h2 class="anchored" data-anchor-id="who-should-read-this-page"><span style="color: #4A90E2;">Who should read this page?</span></h2>
+<p>This page will present a suggested line of enquiry and some rule-of-thumb numbers suitable for undergraduate projects. Postgraduate students are very welcome to use this as a starting point but should refer to a suitable textbook for further detail and speak to a member of the MASH team as soon as possible.</p>
+<p>This page aims to communicate to a non-mathematical audience so technical words will either be avoided, or explained in a non-technical way.</p>
+<div class="callout callout-style-default callout-tip callout-titled" title="SPSS">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+SPSS
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Information on how to complete the steps in SPSS will be given in the SPSS sidebar.</p>
+<p>There are a lot of options, many of which will not be discussed, therefore if something isn’t mentioned then the SPSS default setting is assumed.</p>
+<p>You don’t have to use SPSS to complete Exploratory Factor Analysis (EFA), other statistical software will also work.</p>
+</div>
+</div>
+</section>
+<section id="what-is-factor-analysis" class="level2">
+<h2 class="anchored" data-anchor-id="what-is-factor-analysis"><span style="color: #4A90E2;">What is Factor Analysis?</span></h2>
+<p>Factor analysis comes in several forms, each with specific goals, assumptions, and use cases. In this overview, we’ll focus on Exploratory Factor Analysis (EFA). The most common form of EFA is Principal Axis Factoring (PAF), which aims to identify the underlying, latent factors that influence how the variables are related.</p>
+<p>Likert scales are commonly used in research to measure opinions, attitudes, perceptions and behaviours. A questionnaire is likely to use several individual Likert items, each attempting to measure the same trait, which are then combined together in order to create an overall scale before statistical analysis is carried out.</p>
+<div class="callout callout-style-default callout-tip callout-titled" title="Vocabulary">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Vocabulary
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<ul>
+<li>A ‘factor’ is an independent variable.<br>
+</li>
+<li>‘Scale’ is a type of variable that takes values from a continuous range.<br>
+</li>
+<li>‘A scale’ usually refers to a specific factor/variable of the ‘scale’ type.</li>
+<li>An ‘item’ is a single question on a questionnaire</li>
+</ul>
+</div>
+</div>
+<p>EFA helps to ensure that similar items are grouped together, and helps confirm that the questionnaire is actually measuring the variables you intended it to. Whilst you need a data set in order to run EFA, thinking about how you expect the Likert items to measure the factors of interest is something you need to do before you send out a questionnaire.</p>
+<p>Here is a very simple example to illustrate the concept.</p>
+<p>Factor 1: Confidence<br>
+Factor 2: Curiosity</p>
+<p>Rate these items on a scale of 1 to 5 where 1 is ‘not at all’ and 5 is ‘very much’:<br>
+- Item 1: “I feel capable of achieving my goals.”<br>
+- Item 2: “I enjoy exploring new ideas.”<br>
+- Item 3: “I actively seek out new experiences.”<br>
+- Item 4: “I trust my ability to succeed.”</p>
+<p>We hypothesise that items 1 and 4 measure ‘confidence’ and items 2 and 3 measure ‘curiosity’ but we should run an EFA to check that the people responding to the survey have also interpreted the questions in this way.</p>
+<p>Factor analysis is mathematical, it doesn’t have access to the meaning behind the questions, and therefore it might suggest grouping items together that don’t make sense in context. It is your job to use EFA as a tool and to bring subject and contextual knowledge to the analysis.</p>
+</section>
+<section id="check-your-data-is-suitable-for-factor-analysis" class="level2 page-columns page-full">
+<h2 class="anchored" data-anchor-id="check-your-data-is-suitable-for-factor-analysis"><span style="color: #4A90E2;">Check your data is suitable for factor analysis</span></h2>
+<p>You will need enough data points, something around n=50 is generally considered enough, but you could get away with fewer, especially if you don’t have many factors.</p>
+<p>Kaiser-Meyer-Olkin (KMO) takes into account the sample size and also looks at the proportion of shared variance.</p>
+<p>Bartlett’s Test of Sphericity looks at the correlation matrix.</p>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Step 1: Check the data is suitable to proceed with EFA
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Calculate the KMO and Barlett values for your data.</p>
+<p>A significant Bartlett value (i.e.&nbsp;<span class="math inline">\(p&lt;0.05\)</span>) is evidence that your items are related strongly enough to attempt factoring them.</p>
+<p>A KMO value bigger than 0.5 is also evidence of this.</p>
+</div>
+</div>
+
+<div class="no-row-height column-margin column-container"><div class="">
+<p><strong>SPSS how-to</strong><br>
+1. ANALYZE &gt; DIMENSION REDUCTION &gt; FACTOR<br>
+2. Put all items of interest into ‘variables’<br>
+3. Select ‘DESCRIPTIVES’ tab<br>
+4. Select ‘KMO and Bartlett’s test of Sphericty’<br>
+5. ‘OK’ to run the analysis</p>
+</div></div><section id="correlation" class="level3 page-columns page-full">
+<h3 class="anchored" data-anchor-id="correlation">Correlation</h3>
+<p>If we are conducting factor analysis it is because we believe more than one item measures the same underlying variable. If this is true then responses to these items will correlate with each other (although they will not be, and shouldn’t be, identical).</p>
+<p>The correlation matrix contains all the Pearson’s <span class="math inline">\(r\)</span> values between each pair of items, so can be interpreted in the usual way:</p>
+<p><span class="math inline">\(|r| = 0.2\)</span> for weak correlation<br>
+<span class="math inline">\(|r| = 0.5\)</span> for moderate correlation<br>
+<span class="math inline">\(|r| = 0.7\)</span> for strong correlation.</p>
+<p><span class="math inline">\(|r| &lt; 0.3\)</span> is often used as a exclusion criterion in EFA, but you can adjust this value dependent on your own research area and situation,</p>
+<div class="callout callout-style-default callout-tip callout-titled" title="Notation">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Notation
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><span class="math inline">\(|r|\)</span> is notation for ‘absolute value of <span class="math inline">\(r\)</span>’ and it means ‘ignore any negative sign’</p>
+</div>
+</div>
+<p>The anti-image correlation matrix is also a useful tool (be careful to distinguish this from the anti-image covariance matrix). Rather than focusing on how each item correlates with each other item, it gives us more of an overview of how much the variable contributes to the overall factor structure.</p>
+<p>The individual values are called ‘Measures of Sampling Adequecy (MSA)’ and we generally want the diagonal of the matrix to show <span class="math inline">\(|MSA| &gt; 0.5\)</span>. If an item measured against itself has an <span class="math inline">\(|MSA| &lt; 0.5\)</span> , it is a candidate for removal.</p>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Step 2: Remove uncorrelated items
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>If you have items that don’t correlate well with any other item then they won’t fit well into any factor. It is a good idea to get rid of very poorly correlated items now, and also keep an eye on these correlation values throughout the rest of the process.</p>
+<ul>
+<li>Consider removing items where all correlations are <span class="math inline">\(|r|&lt;0.3\)</span><br>
+</li>
+<li>Consider removing items with <span class="math inline">\(|MSA| &lt; 0.5\)</span></li>
+</ul>
+</div>
+</div>
+
+<div class="no-row-height column-margin column-container"><div class="">
+<p><strong>SPSS how-to</strong><br>
+1. ANALYZE &gt; DIMENSION REDUCTION &gt; FACTOR<br>
+2. Put all items of interest into ‘variables’<br>
+3. Select ‘DESCRIPTIVES’ tab<br>
+4. Select ‘Coefficients’ and ‘Anti-image’<br>
+5. ‘OK’ to run the analysis</p>
+</div></div><section id="reverse-coding" class="level4">
+<h4 class="anchored" data-anchor-id="reverse-coding">Reverse Coding</h4>
+<p>Reverse coding is required when an item correlates negatively to it’s factor. Returning to our example we add another item:</p>
+<ul>
+<li>Item 1: “I feel capable of achieving my goals.”<br>
+</li>
+<li>Item 2: “I enjoy exploring new ideas.”<br>
+</li>
+<li>Item 3: “I actively seek out new experiences.”<br>
+</li>
+<li>Item 4: “I trust my ability to succeed.”<br>
+</li>
+<li>Item 5: “I don’t think I can be successful”</li>
+</ul>
+<p>Item 5 does measure ‘Confidence’ but because it measures a lack of confidence it would need recoding to reverse the scores, i.e.to convert ‘agreement with low confidence’ into ‘disagreement with confidence’.</p>
+<p>If you later spot an item that correlates, or loads, negatively, go back and read the question to see if it is a reverse question.</p>
+</section>
+</section>
+</section>
+<section id="how-many-factors-are-there" class="level2 page-columns page-full">
+<h2 class="anchored" data-anchor-id="how-many-factors-are-there"><span style="color: #4A90E2;">How many factors are there?</span></h2>
+<p>If you are using a pre-defined scale you might know how many factors you are expecting to see, but even in this situation it is worth checking that the data agrees with you. The first step is to allow the software to detect as many factors as it can, and then compare this to theory.</p>
+<p>One way to assess the number of factors is with a scree plot. ‘Scree’ isn’t a mathematical term, but relates to the fact that the graph looks like a mountain, with the scree being the point where we visually observe the beginning of the base of the mountain.</p>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Step 3: Calculate the number of factors
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Run EFA and request a scree plot. Look at the value along the x-axis where you see the start of the scree (sometimes described as the elbow of the graph). Subtract one from this value to give the number of calculated factors.</p>
+</div>
+</div>
+
+<div class="no-row-height column-margin column-container"><div class="">
+<p><strong>SPSS how-to</strong><br>
+1. ANALYZE &gt; DIMENSION REDUCTION &gt; FACTOR<br>
+2. Put all the items into ‘variables’<br>
+3. Select the ‘EXTRACTION’ tab and select ‘Principal Axis Factoring’ from the method drop-down<br>
+4. Select ‘scree plot’<br>
+5. ‘OK’ to run the analysis</p>
+</div></div><p>If this is the number of factors you expected, then breathe a sigh of relief. If it is not what you expected then you will either need to argue for a different number of factors, or remove some items and try again. Another way to estimate the number of factors is to look at the table of eigenvalues and see how many possible factors have an eigenvalue of more than 1.</p>
+<p>Remember that there is no ‘correct answer’, we are just looking for evidence.</p>
+</section>
+<section id="do-you-need-to-apply-a-rotation" class="level2 page-columns page-full">
+<h2 class="anchored" data-anchor-id="do-you-need-to-apply-a-rotation"><span style="color: #4A90E2;">Do you need to apply a rotation?</span></h2>
+<div class="callout callout-style-default callout-tip callout-titled" title="Maths vocabulary">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Maths vocabulary
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>EFA uses pure maths to examine relationships between items, and to group items into factors. Whilst the software will do the maths for you, it does mean there is a lot of mathematical language which can be off-putting.</p>
+<ul>
+<li>A “matrix” is a grid of numbers.</li>
+<li>A “rotation” is a way of transforming the matrix</li>
+<li>“Eigenvalues” are a way of describing of the matrix</li>
+<li>“Orthogonal” means ‘at right angles’ and implies independence</li>
+<li>“Oblique” means ‘not at right angles’</li>
+</ul>
+</div>
+</div>
+<div class="callout callout-style-default callout-note callout-titled" title="Single factor">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Single factor
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>If you only have one factor then you don’t need to worry about rotations and you can skip to the next section!</p>
+</div>
+</div>
+<p>When you have two or more factors they sometimes overlap. It is preferable to have a clear factor structure that allows each item to load onto a single factor. We rotate the factors to improve item alignment and reduce overlap.</p>
+<p>There are two general categories of rotation, referring to the underlying mathematical process used, ‘orthogonal’ and ‘oblique’. Within these two categories there are many specific options. ‘Varimax’ is a commonly used othogonal rotation and ‘Direct Oblimin’ is a commonly used oblique rotation, knowledge of these two is sufficient for most undergraduates.</p>
+<p>Orthogonal rotation assumes that there is no correlation between factors (whilst we want lots of correlation within each factor, we don’t necessaily want it between factors). It is the most straightforward situation.</p>
+<p>Oblique rotation accounts for correlation between factors in addition to correlation within factors. This happens if your factors are sub-scales of a larger scale, or have a strong theoretical relationship.</p>
+<p>Since the oblique rotation is more complex to interpret we will only use it if necessary. Therefore, even if you think your factors are theorectically related, we will check this statistically in the first step. There is no hard line between the two situations.</p>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Step 4: Choose rotation
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Run EFA using a Direct Oblimin and examine the ‘Component Correlation Matrix’ (careful: this is different from both the ‘correlation matrix’ and the ‘component matrix’!). This shows the inter-factor correlations.</p>
+<p>If all the values are between <span class="math inline">\(-0.3\)</span> and <span class="math inline">\(0.3\)</span> then the amount of inter-factor correlation is low and we will use the orthogonal ‘Varimax’. If there are larger correlations present you might want to use the oblique rotation.</p>
+</div>
+</div>
+
+<div class="no-row-height column-margin column-container"><div class="">
+<p><strong>SPSS how-to</strong><br>
+1. ANALYZE &gt; DIMENSION REDUCTION &gt; FACTOR<br>
+2. Put all the items into ‘variables’<br>
+3. Select the ‘EXTRACTION’ tab and select ‘Principal Axis Factoring’ from the method drop-down<br>
+4. Select ‘ROTATION’ tab<br>
+5. Select ‘Direct Oblimin’<br>
+6. ‘OK’ to run the analysis</p>
+</div></div></section>
+<section id="matching-up-items-with-factors" class="level2 page-columns page-full">
+<h2 class="anchored" data-anchor-id="matching-up-items-with-factors"><span style="color: #4A90E2;">Matching up items with factors</span></h2>
+<p>In EFA the language used is that items ‘load’ onto factors, so in the confidence/curiosity example given above we might expect items 1 and 4 to load onto one factor and items 2 and 3 to load onto the other factor. The names of the factors are assigined by the researcher, the maths doesn’t understand the context.</p>
+<p>To see how items load onto factors we need to examine the output matrix.</p>
+<ul>
+<li>If you have only one factor, or you chose not to apply a rotation you will interpret the ‘Component Matrix’</li>
+<li>For orthogonal rotations you look at the ‘Rotated Component Matrix’</li>
+<li>For oblique rotations you look at the ‘Pattern’ and ‘Structure’ matrices. Use the Pattern matrix in the first instance and cross reference with the results of the structure matrix.</li>
+</ul>
+<p>The factor loadings are not actually correlations, but they are interpreted very similarly i.e.</p>
+<ul>
+<li>they range from -1 to 1<br>
+</li>
+<li>0 means no loading<br>
+</li>
+<li>‘Zero loading’ means we don’t think a given item contributes to the factor</li>
+<li>zero is often defined as a |loading| <span class="math inline">\(&lt; 0.1\)</span></li>
+<li>|loading| <span class="math inline">\(&gt; 0.3\)</span> is usually taken as a sufficient value to attribute an item to a factor</li>
+<li>|loading| <span class="math inline">\(&gt; 0.6\)</span> is a strong value</li>
+</ul>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Step 5: Assign items to factors
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>If you are lucky then you have a list of items that each load onto only one factor and these item-factor relationships are the ones you expect from the context of the questions. If this is the case, then your factors are complete.</p>
+</div>
+</div>
+
+<div class="no-row-height column-margin column-container"><div class="">
+<p><strong>SPSS how-to</strong><br>
+1. ANALYZE &gt; DIMENSION REDUCTION &gt; FACTOR<br>
+2. Put all the items into ‘variables’<br>
+3. Select ‘ROTATION’ tab and choose rotation type<br>
+4. Select ‘EXTRACTION’ tab, select ‘Principal Axis Factoring’ and input the fixed number of factors you calculated in step 4<br>
+5. ‘OK’ to run the analysis</p>
+</div></div><p>There are three situations that might occur that will make your analysis less straightforward. issues to deal with, and all of them require you to use your own judgement rather than follow a prescribed plan.</p>
+<section id="an-item-doesnt-load-strongly-onto-any-factor" class="level4">
+<h4 class="anchored" data-anchor-id="an-item-doesnt-load-strongly-onto-any-factor">An item doesn’t load strongly onto any factor</h4>
+<p>You might want to remove items that don’t appear to load strongly onto any factors. This decision will need to take into account:</p>
+<ul>
+<li>the strengths of other loading values (is the value of concern unusually low)</li>
+<li>the theoretical importance to the scale</li>
+</ul>
+</section>
+<section id="an-item-loads-onto-more-than-one-item" class="level4">
+<h4 class="anchored" data-anchor-id="an-item-loads-onto-more-than-one-item">An item loads onto more than one item</h4>
+<p>You will need to make a decision about where to place items that load onto more than one factor. This decision should usually be primarily based on the theory and context of the items, but you can also complete a reliability analysis using Cronbach’s alpha to support your decision (read on for further details of this).</p>
+</section>
+<section id="an-item-loads-strongly-onto-an-unexpected-item" class="level4">
+<h4 class="anchored" data-anchor-id="an-item-loads-strongly-onto-an-unexpected-item">An item loads strongly onto an unexpected item</h4>
+<p>This could be an error, so it is worth checking that your data was collected and recorded correctly. It might be that the factors are related to each other (are they subscales? should you/did you use an oblique rotation?). This is tricky one to deal with and it is best to discuss this situation with your academic supervisor.</p>
+</section>
+</section>
+<section id="checking-the-reliability-of-the-factor" class="level2 page-columns page-full">
+<h2 class="anchored" data-anchor-id="checking-the-reliability-of-the-factor"><span style="color: #4A90E2;">Checking the reliability of the factor</span></h2>
+<p>Once you have a list of which items are grouped together, it is worth checking that the factor is internally consistent using Cronbach’s <span class="math inline">\(\alpha\)</span>. This is an additional check that the factor is cohesive.</p>
+<p>Ideally you would like <span class="math inline">\(0.6 &lt; |\alpha| &lt; 0.9\)</span> to show that the scale is internally consistent.</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><span class="math inline">\(\alpha\)</span> is a Greek letter and pronoucned ‘alpha’. It is used in various different ways, but in EFA it likely refers to Cronbach’s <span class="math inline">\(\alpha\)</span>.</p>
+</div>
+</div>
+<p>You can also calculate Cronbach’s <span class="math inline">\(\alpha\)</span> with, and without, different items to further assess whether or not an item ‘fits’.</p>
+
+<div class="no-row-height column-margin column-container"><div class="">
+<p><strong>SPSS how-to</strong><br>
+1. ANALYZE &gt; SCALE &gt; RELIABILITY<br>
+2. Put the selected items into ‘variables’<br>
+3. Select ‘DESCRIPTIVES’ tab and select statistics for ‘scale’ and ‘scale if item deleted’<br>
+4. ‘OK’ to run the analysis</p>
+</div></div><p>You need to be careful to use flexibility of judgement here. If, for example, you have a seven item scale with <span class="math inline">\(\alpha\)</span> = 0.78 and removing one item increases <span class="math inline">\(\alpha\)</span> to 0.80, should you remove the item? Probably not, that is a small gain and, as always with EFA, you should consider the big picture and use the Cronbach’s <span class="math inline">\(\alpha\)</span> as one piece of evidence.</p>
+<p>Cronbach’s measures internal correlation, so whilst <span class="math inline">\(\alpha\)</span> close to 1 might seem like a good thing, too high a value suggests that the items don’t have enough variability and there is a redundancy in the items.</p>
+</section>
+
+</main>
+<!-- /main column -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const onCopySuccess = function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
+  });
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    });
+    clipboardModal.on('success', onCopySuccess);
+  }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp('/' + window.location.host + '/');
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>

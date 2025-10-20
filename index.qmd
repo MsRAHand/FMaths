@@ -1,0 +1,271 @@
+---
+title: "Exploratory Factor Analysis"
+format: html
+---
+
+## [Who should read this page?]{style="color: #4A90E2;"}
+
+This page will present a suggested line of enquiry and some rule-of-thumb numbers suitable for undergraduate projects. Postgraduate students are very welcome to use this as a starting point but should refer to a suitable textbook for further detail and speak to a member of the MASH team as soon as possible.
+
+This page aims to communicate to a non-mathematical audience so technical words will either be avoided, or explained in a non-technical way.
+
+::: {.callout-tip title="SPSS"}
+Information on how to complete the steps in SPSS will be given in the SPSS sidebar.
+
+There are a lot of options, many of which will not be discussed, therefore if something isn't mentioned then the SPSS default setting is assumed.
+
+You don't have to use SPSS to complete Exploratory Factor Analysis (EFA), other statistical software will also work.
+:::
+
+## [What is Factor Analysis?]{style="color: #4A90E2;"}
+
+Factor analysis comes in several forms, each with specific goals, assumptions, and use cases. In this overview, we’ll focus on Exploratory Factor Analysis (EFA). The most common form of EFA is Principal Axis Factoring (PAF), which aims to identify the underlying, latent factors that influence how the variables are related.
+
+Likert scales are commonly used in research to measure opinions, attitudes, perceptions and behaviours. A questionnaire is likely to use several individual Likert items, each attempting to measure the same trait, which are then combined together in order to create an overall scale before statistical analysis is carried out.
+
+::: {.callout-tip title="Vocabulary"}
+-   A 'factor' is an independent variable.\
+-   'Scale' is a type of variable that takes values from a continuous range.\
+-   'A scale' usually refers to a specific factor/variable of the 'scale' type.
+-   An 'item' is a single question on a questionnaire
+:::
+
+EFA helps to ensure that similar items are grouped together, and helps confirm that the questionnaire is actually measuring the variables you intended it to. Whilst you need a data set in order to run EFA, thinking about how you expect the Likert items to measure the factors of interest is something you need to do before you send out a questionnaire.
+
+Here is a very simple example to illustrate the concept.
+
+Factor 1: Confidence\
+Factor 2: Curiosity
+
+Rate these items on a scale of 1 to 5 where 1 is 'not at all' and 5 is 'very much':\
+- Item 1: "I feel capable of achieving my goals."\
+- Item 2: "I enjoy exploring new ideas."\
+- Item 3: "I actively seek out new experiences."\
+- Item 4: "I trust my ability to succeed."
+
+We hypothesise that items 1 and 4 measure 'confidence' and items 2 and 3 measure 'curiosity' but we should run an EFA to check that the people responding to the survey have also interpreted the questions in this way.
+
+Factor analysis is mathematical, it doesn't have access to the meaning behind the questions, and therefore it might suggest grouping items together that don't make sense in context. It is your job to use EFA as a tool and to bring subject and contextual knowledge to the analysis.
+
+## [Check your data is suitable for factor analysis]{style="color: #4A90E2;"}
+
+You will need enough data points, something around n=50 is generally considered enough, but you could get away with fewer, especially if you don't have many factors.
+
+Kaiser-Meyer-Olkin (KMO) takes into account the sample size and also looks at the proportion of shared variance.
+
+Bartlett's Test of Sphericity looks at the correlation matrix.
+
+::: {.callout-note icon="false"}
+## Step 1: Check the data is suitable to proceed with EFA
+
+Calculate the KMO and Barlett values for your data.
+
+A significant Bartlett value (i.e. $p<0.05$) is evidence that your items are related strongly enough to attempt factoring them.
+
+A KMO value bigger than 0.5 is also evidence of this.
+:::
+
+::: column-margin
+**SPSS how-to**\
+1. ANALYZE \> DIMENSION REDUCTION \> FACTOR\
+2. Put all items of interest into 'variables'\
+3. Select 'DESCRIPTIVES' tab\
+4. Select 'KMO and Bartlett's test of Sphericty'\
+5. 'OK' to run the analysis
+:::
+
+### Correlation
+
+If we are conducting factor analysis it is because we believe more than one item measures the same underlying variable. If this is true then responses to these items will correlate with each other (although they will not be, and shouldn't be, identical).
+
+The correlation matrix contains all the Pearson's $r$ values between each pair of items, so can be interpreted in the usual way:
+
+$|r| = 0.2$ for weak correlation\
+$|r| = 0.5$ for moderate correlation\
+$|r| = 0.7$ for strong correlation.
+
+$|r| < 0.3$ is often used as a exclusion criterion in EFA, but you can adjust this value dependent on your own research area and situation,
+
+::: {.callout-tip title="Notation"}
+$|r|$ is notation for 'absolute value of $r$' and it means 'ignore any negative sign'
+:::
+
+The anti-image correlation matrix is also a useful tool (be careful to distinguish this from the anti-image covariance matrix). Rather than focusing on how each item correlates with each other item, it gives us more of an overview of how much the variable contributes to the overall factor structure.
+
+The individual values are called 'Measures of Sampling Adequecy (MSA)' and we generally want the diagonal of the matrix to show $|MSA| > 0.5$. If an item measured against itself has an $|MSA| < 0.5$ , it is a candidate for removal.
+
+::: {.callout-note icon="false"}
+## Step 2: Remove uncorrelated items
+
+If you have items that don't correlate well with any other item then they won't fit well into any factor. It is a good idea to get rid of very poorly correlated items now, and also keep an eye on these correlation values throughout the rest of the process.
+
+-   Consider removing items where all correlations are $|r|<0.3$\
+-   Consider removing items with $|MSA| < 0.5$
+:::
+
+::: column-margin
+**SPSS how-to**\
+1. ANALYZE \> DIMENSION REDUCTION \> FACTOR\
+2. Put all items of interest into 'variables'\
+3. Select 'DESCRIPTIVES' tab\
+4. Select 'Coefficients' and 'Anti-image'\
+5. 'OK' to run the analysis
+:::
+
+#### Reverse Coding
+
+Reverse coding is required when an item correlates negatively to it's factor. Returning to our example we add another item:
+
+-   Item 1: "I feel capable of achieving my goals."\
+-   Item 2: "I enjoy exploring new ideas."\
+-   Item 3: "I actively seek out new experiences."\
+-   Item 4: "I trust my ability to succeed."\
+-   Item 5: "I don't think I can be successful"
+
+Item 5 does measure 'Confidence' but because it measures a lack of confidence it would need recoding to reverse the scores, i.e.to convert 'agreement with low confidence' into 'disagreement with confidence'.
+
+If you later spot an item that correlates, or loads, negatively, go back and read the question to see if it is a reverse question.
+
+## [How many factors are there?]{style="color: #4A90E2;"}
+
+If you are using a pre-defined scale you might know how many factors you are expecting to see, but even in this situation it is worth checking that the data agrees with you. The first step is to allow the software to detect as many factors as it can, and then compare this to theory.
+
+One way to assess the number of factors is with a scree plot. 'Scree' isn't a mathematical term, but relates to the fact that the graph looks like a mountain, with the scree being the point where we visually observe the beginning of the base of the mountain.
+
+::: {.callout-note icon="false"}
+## Step 3: Calculate the number of factors
+
+Run EFA and request a scree plot. Look at the value along the x-axis where you see the start of the scree (sometimes described as the elbow of the graph). Subtract one from this value to give the number of calculated factors.
+:::
+
+::: column-margin
+**SPSS how-to**\
+1. ANALYZE \> DIMENSION REDUCTION \> FACTOR\
+2. Put all the items into 'variables'\
+3. Select the 'EXTRACTION' tab and select 'Principal Axis Factoring' from the method drop-down\
+4. Select 'scree plot'\
+5. 'OK' to run the analysis
+:::
+
+If this is the number of factors you expected, then breathe a sigh of relief. If it is not what you expected then you will either need to argue for a different number of factors, or remove some items and try again. Another way to estimate the number of factors is to look at the table of eigenvalues and see how many possible factors have an eigenvalue of more than 1.
+
+Remember that there is no 'correct answer', we are just looking for evidence.
+
+## [Do you need to apply a rotation?]{style="color: #4A90E2;"}
+
+::: {.callout-tip title="Maths vocabulary"}
+EFA uses pure maths to examine relationships between items, and to group items into factors. Whilst the software will do the maths for you, it does mean there is a lot of mathematical language which can be off-putting.
+
+-   A "matrix" is a grid of numbers.
+-   A "rotation" is a way of transforming the matrix
+-   "Eigenvalues" are a way of describing of the matrix
+-   "Orthogonal" means 'at right angles' and implies independence
+-   "Oblique" means 'not at right angles'
+:::
+
+::: {.callout-note title="Single factor"}
+If you only have one factor then you don't need to worry about rotations and you can skip to the next section!
+:::
+
+When you have two or more factors they sometimes overlap. It is preferable to have a clear factor structure that allows each item to load onto a single factor. We rotate the factors to improve item alignment and reduce overlap.
+
+There are two general categories of rotation, referring to the underlying mathematical process used, 'orthogonal' and 'oblique'. Within these two categories there are many specific options. 'Varimax' is a commonly used othogonal rotation and 'Direct Oblimin' is a commonly used oblique rotation, knowledge of these two is sufficient for most undergraduates.
+
+Orthogonal rotation assumes that there is no correlation between factors (whilst we want lots of correlation within each factor, we don't necessaily want it between factors). It is the most straightforward situation.
+
+Oblique rotation accounts for correlation between factors in addition to correlation within factors. This happens if your factors are sub-scales of a larger scale, or have a strong theoretical relationship.
+
+Since the oblique rotation is more complex to interpret we will only use it if necessary. Therefore, even if you think your factors are theorectically related, we will check this statistically in the first step. There is no hard line between the two situations.
+
+::: {.callout-note icon="false"}
+## Step 4: Choose rotation
+
+Run EFA using a Direct Oblimin and examine the 'Component Correlation Matrix' (careful: this is different from both the 'correlation matrix' and the 'component matrix'!). This shows the inter-factor correlations.
+
+If all the values are between $-0.3$ and $0.3$ then the amount of inter-factor correlation is low and we will use the orthogonal 'Varimax'. If there are larger correlations present you might want to use the oblique rotation.
+:::
+
+::: column-margin
+**SPSS how-to**\
+1. ANALYZE \> DIMENSION REDUCTION \> FACTOR\
+2. Put all the items into 'variables'\
+3. Select the 'EXTRACTION' tab and select 'Principal Axis Factoring' from the method drop-down\
+4. Select 'ROTATION' tab\
+5. Select 'Direct Oblimin'\
+6. 'OK' to run the analysis
+:::
+
+## [Matching up items with factors]{style="color: #4A90E2;"}
+
+In EFA the language used is that items 'load' onto factors, so in the confidence/curiosity example given above we might expect items 1 and 4 to load onto one factor and items 2 and 3 to load onto the other factor. The names of the factors are assigined by the researcher, the maths doesn't understand the context.
+
+To see how items load onto factors we need to examine the output matrix.
+
+-   If you have only one factor, or you chose not to apply a rotation you will interpret the 'Component Matrix'
+-   For orthogonal rotations you look at the 'Rotated Component Matrix'
+-   For oblique rotations you look at the 'Pattern' and 'Structure' matrices. Use the Pattern matrix in the first instance and cross reference with the results of the structure matrix.
+
+The factor loadings are not actually correlations, but they are interpreted very similarly i.e.
+
+-   they range from -1 to 1\
+-   0 means no loading\
+-   'Zero loading' means we don't think a given item contributes to the factor
+-   zero is often defined as a \|loading\| $< 0.1$
+-   \|loading\| $> 0.3$ is usually taken as a sufficient value to attribute an item to a factor
+-   \|loading\| $> 0.6$ is a strong value
+
+::: {.callout-note icon="false"}
+## Step 5: Assign items to factors
+
+If you are lucky then you have a list of items that each load onto only one factor and these item-factor relationships are the ones you expect from the context of the questions. If this is the case, then your factors are complete.
+:::
+
+::: column-margin
+**SPSS how-to**\
+1. ANALYZE \> DIMENSION REDUCTION \> FACTOR\
+2. Put all the items into 'variables'\
+3. Select 'ROTATION' tab and choose rotation type\
+4. Select 'EXTRACTION' tab, select 'Principal Axis Factoring' and input the fixed number of factors you calculated in step 4\
+5. 'OK' to run the analysis
+:::
+
+There are three situations that might occur that will make your analysis less straightforward. issues to deal with, and all of them require you to use your own judgement rather than follow a prescribed plan.
+
+#### An item doesn't load strongly onto any factor
+
+You might want to remove items that don't appear to load strongly onto any factors. This decision will need to take into account:
+
+-   the strengths of other loading values (is the value of concern unusually low)
+-   the theoretical importance to the scale
+
+#### An item loads onto more than one item
+
+You will need to make a decision about where to place items that load onto more than one factor. This decision should usually be primarily based on the theory and context of the items, but you can also complete a reliability analysis using Cronbach's alpha to support your decision (read on for further details of this).
+
+#### An item loads strongly onto an unexpected item
+
+This could be an error, so it is worth checking that your data was collected and recorded correctly. It might be that the factors are related to each other (are they subscales? should you/did you use an oblique rotation?). This is tricky one to deal with and it is best to discuss this situation with your academic supervisor.
+
+## [Checking the reliability of the factor]{style="color: #4A90E2;"}
+
+Once you have a list of which items are grouped together, it is worth checking that the factor is internally consistent using Cronbach's $\alpha$. This is an additional check that the factor is cohesive.
+
+Ideally you would like $0.6 < |\alpha| < 0.9$ to show that the scale is internally consistent.
+
+::: callout-note
+$\alpha$ is a Greek letter and pronoucned 'alpha'. It is used in various different ways, but in EFA it likely refers to Cronbach's $\alpha$.
+:::
+
+You can also calculate Cronbach's $\alpha$ with, and without, different items to further assess whether or not an item 'fits'.
+
+::: column-margin
+**SPSS how-to**\
+1. ANALYZE \> SCALE \> RELIABILITY\
+2. Put the selected items into 'variables'\
+3. Select 'DESCRIPTIVES' tab and select statistics for 'scale' and 'scale if item deleted'\
+4. 'OK' to run the analysis
+:::
+
+You need to be careful to use flexibility of judgement here. If, for example, you have a seven item scale with $\alpha$ = 0.78 and removing one item increases $\alpha$ to 0.80, should you remove the item? Probably not, that is a small gain and, as always with EFA, you should consider the big picture and use the Cronbach's $\alpha$ as one piece of evidence.
+
+Cronbach's \alpha measures internal correlation, so whilst $\alpha$ close to 1 might seem like a good thing, too high a value suggests that the items don't have enough variability and there is a redundancy in the items.
